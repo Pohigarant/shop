@@ -1,0 +1,19 @@
+from rest_framework import permissions
+
+
+class IsOwnerOrAdmin(permissions.BasePermission):
+    message = 'Вы не можете редактировать'
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.user == request.user or request.user.is_staff
+
+
+class IsCartOwnerOrAdmin(permissions.BasePermission):
+    """Класс разрешения для корзины"""
+    message = 'Вы не можете редактировать'
+
+    def has_object_permission(self, request, view, obj):
+
+        return obj.cart.user == request.user or request.user.is_staff
