@@ -14,7 +14,7 @@ class Review(models.Model):
     )
     user = models.ForeignKey(
         User,
-        related_name='user_reviews'
+        related_name='user_reviews',
         on_delete=models.CASCADE,
         verbose_name="Покупатель"
     )
