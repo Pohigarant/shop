@@ -3,12 +3,12 @@ from django_filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.pagination import  PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from review.models import Review
 from review.serializers import ReviewSerializer
-from shop1.permissions import IsOwnerOrAdmin
+from shop1.permissions import IsOwnerOrAdmin, HasPurchasedProduct
 
 
 # Create your views here.
@@ -27,7 +27,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return [AllowAny()]
         if self.action == 'create':
-            return [IsAuthenticated()]
+            return [IsAuthenticated(), HasPurchasedProduct()]
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsOwnerOrAdmin()]
         return super().get_permissions()

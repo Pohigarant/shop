@@ -1,5 +1,8 @@
 from rest_framework import permissions
 
+from cart.models import Cart, CartItem
+from products.models import Product
+
 
 class IsOwnerOrAdmin(permissions.BasePermission):
     message = 'Вы не можете редактировать'
@@ -17,3 +20,21 @@ class IsCartOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
 
         return obj.cart.user == request.user or request.user.is_staff
+
+
+class HasPurchasedProduct(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if not  user.is_authenticated:
+            return False
+
+        product_name = request.data.get("product")
+        try:
+            product = Product.objects.get(name=product_name)
+        except Product.DoesNotExist:
+            return False
+
+        return CartItem.objects.filter(cart__user=user,product=product).exists()
+
+
+
