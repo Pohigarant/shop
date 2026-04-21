@@ -34,6 +34,12 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if data['password'] != data['password2']:
             raise serializers.ValidationError({"password": "Пароли не совпадают"})
+        if len(data['password']) <8:
+            raise serializers.ValidationError("Пароль должен быть не меньше 8 символов")
+
+        if not any(i.isdigit() for i in data['password']):
+            raise serializers.ValidationError("Пароль должен содержать хотя бы 1 цифру")
+
         return data
 
     def create(self, validated_data):

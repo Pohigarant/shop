@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from django_filters import OrderingFilter
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.pagination import  PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
+
+from products.models import Product
 from review.models import Review
 from review.serializers import ReviewSerializer
 from shop1.permissions import IsOwnerOrAdmin, HasPurchasedProduct
@@ -23,6 +24,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ordering = ('-created_at',)
 
 
+
     def get_permissions(self):
         if self.action == 'list':
             return [AllowAny()]
@@ -32,6 +34,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return [IsOwnerOrAdmin()]
         return super().get_permissions()
 
+    def get_queryset(self):
+        product_pk = self.kwargs.get('prod_pk')
+        user_pk = self.kwargs.get('user_pk')
+        if product_pk:
+            return Review.objects.filter(product_id=product_pk)
+        if user_pk:
+            return Review.objects.filter(user_id=user_pk)
+        return Review.objects.all()
+
+
     def perform_create(self, serializer):
-        # Автоматически подставляем текущего пользователя
-        serializer.save(user=self.request.user)
+        prod_pk = self.kwargs.get('prod_pk')
+        if prod_pk:
+            product = get_object_or_404(Product, pk=prod_pk)
+            serializer.save(user=self.request.user, product=product)
+        else:
+            serializer.save(user=self.request.user)

@@ -17,7 +17,6 @@ from review.serializers import ReviewSerializer
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter
@@ -27,7 +26,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ('name',)
 
     def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
+        if self.action in ('list', 'retrieve', 'product_detail'):
             return [AllowAny()]
         return [IsAdminUser()]
 
@@ -38,6 +37,13 @@ class ProductViewSet(viewsets.ModelViewSet):
             return ProductDetailSerializer
         return ProductListSerializer
 
+    def get_queryset(self):
+        category_pk = self.kwargs.get('category_pk')
+        if category_pk:
+            return Product.objects.filter(category_id=category_pk)
+        return Product.objects.all()
+
+
     @action(detail=False, methods=['get'],permission_classes=[AllowAny])
     def popular(self, request, *args, **kwargs):
         queryset= self.get_queryset()
@@ -45,7 +51,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ProductDetailSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail = True, methods=['get'],permission_classes=[AllowAny])
+    @action(detail = True, methods=['get'])
     def product_detail(self, request, pk=None):
         product = self.get_object()
         reviews = product.reviews.all()

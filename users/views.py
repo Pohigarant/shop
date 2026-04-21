@@ -1,5 +1,6 @@
-from django.shortcuts import render
+
 from rest_framework import viewsets, request, status
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -24,6 +25,17 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return User.objects.filter(pk=self.request.user.pk)
         return User.objects.none()
+
+    @action(detail = False, methods = ['GET','PATCH'])
+    def me(self,request,*args, **kwargs):
+        user = self.get_object()
+        if request.method == 'GET':
+            return Response(UserSerializer(user).data)
+        elif request.method == 'PATCH':
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(UserSerializer(user).data)
 
 
 class UserRegisterView(CreateAPIView):
