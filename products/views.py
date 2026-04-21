@@ -20,7 +20,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter
-    # filterset_fields = ('category' 'is_active')
+    filterset_fields = ('category' 'is_active')
     search_fields = ('name', 'model', 'article')
     ordering_fields = ('name', 'model', 'price', 'quantity', 'created_at')
     ordering = ('name',)
