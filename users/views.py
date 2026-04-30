@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -11,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from shop1.permissions import IsOwnerOrAdmin
 from users.models import User
 from users.serializers import UserSerializer, RegisterSerializer
+from users.throttling import RegisterRateThrottle
 
 
 # Create your views here.
@@ -41,6 +43,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserRegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [RegisterRateThrottle]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
