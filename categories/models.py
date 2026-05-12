@@ -25,4 +25,5 @@ class Category(models.Model):
 
 
     def get_absolute_url(self):
-        return reverse('category_detail', kwargs={'slug': self.slug})
+        from django.urls import reverse
+        return reverse('category-detail', kwargs={'pk': self.pk})

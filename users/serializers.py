@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.models import User
 
@@ -34,7 +35,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if data['password'] != data['password2']:
             raise serializers.ValidationError({"password": "Пароли не совпадают"})
-        if len(data['password']) <8:
+        if len(data['password']) < 8:
             raise serializers.ValidationError("Пароль должен быть не меньше 8 символов")
 
         if not any(i.isdigit() for i in data['password']):
@@ -50,3 +51,22 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user: User):
+        token = super().get_token(user)
+
+        token["email"] = user.email
+        token["is_staff"] = user.is_staff
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        data["user"] = {"email": self.user.email,
+            "is_staff": self.user.is_staff,
+        }
+        return data

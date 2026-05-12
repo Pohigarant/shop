@@ -8,10 +8,11 @@ from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from shop1.permissions import IsOwnerOrAdmin
 from users.models import User
-from users.serializers import UserSerializer, RegisterSerializer
+from users.serializers import UserSerializer, RegisterSerializer, CustomTokenObtainPairSerializer
 from users.throttling import RegisterRateThrottle
 
 
@@ -86,3 +87,13 @@ class LogoutView(APIView):
                 {'detail': 'An internal error occurred.'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+
