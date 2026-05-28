@@ -35,7 +35,3 @@ def admin_client(api_client, admin_user):
     api_client.force_authenticate(user=admin_user)
     return api_client
 
-
-@pytest.fixture
-def existing_category(db):
-    return Category.objects.create(name = "Старое название")
