@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Sum, Avg, Prefetch, Q, Count, Max, OuterRef, Subquery
+from django.db.models.fields import CharField
 from django.urls import reverse
 from slugify import slugify
 
@@ -16,13 +18,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
     def save(self, *args, **kwargs):
         # Если slug не передан (пустая строка) — генерируем из name
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-
 
     def get_absolute_url(self):
         from django.urls import reverse
