@@ -14,38 +14,53 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path, include
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from django.urls import include, path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from users.views import CustomTokenObtainPairView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    path('drf-auth/', include('rest_framework.urls')),
-
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path("admin/", admin.site.urls),
+    path("drf-auth/", include("rest_framework.urls")),
+    path(
+        "api/token/",
+        CustomTokenObtainPairView.as_view(),
+        name="token_obtain_pair",
+    ),
+    path(
+        "api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"
+    ),
+    path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/schema/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
 ]
 
 api_urls = [
-    path('api/', include('categories.urls')),
-    path('api/', include('products.urls')),
-
-    path('api/', include('review.urls')),
-
-    path('api/', include('cart.urls')),
-
-    path('api/', include('users.urls')),
-
-    path('api/', include('order.urls')),
+    path("api/", include("categories.urls")),
+    path("api/", include("products.urls")),
+    path("api/", include("review.urls")),
+    path("api/", include("cart.urls")),
+    path("api/", include("users.urls")),
+    path("api/", include("order.urls")),
 ]
 
 urlpatterns += api_urls

@@ -7,6 +7,7 @@ dependencies = [
     "coverage>=7.13.5",
     "django>=6.0.4",
     "django-filter>=25.2",
+    "django-stubs>=6.0.2",
     "djangorestframework>=3.17.1",
     "djangorestframework-simplejwt>=5.5.1",
     "djangorestframework-stubs>=3.16.9",
@@ -19,13 +20,24 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "python-slugify>=8.0.4",
     "requests>=2.33.1",
+    "types-django-filter>=26.1.0.20260713",
     "whitenoise>=6.12.0",
 ]
 
 [dependency-groups]
 dev = [
+    "mypy>=2.3.0",
     "pytest>=9.0.3",
     "pytest-cov>=7.1.0",
+    "ruff>=0.16.2",
 ]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "shop1.settings"
+
+
+[tool.ruff]
+line-length = 79
+exclude = ["migrations", ".venv","Тренировка.py"]
+
+[tool.mypy]
+ignore_missing_imports = true

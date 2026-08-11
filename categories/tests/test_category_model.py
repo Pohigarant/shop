@@ -9,6 +9,7 @@ from categories.models import Category
 def category(db):
     return Category.objects.create(name="test")
 
+
 @pytest.mark.django_db
 def test_category_creat():
     cat = Category.objects.create(name="test1")
@@ -16,6 +17,7 @@ def test_category_creat():
     assert Category.objects.count() == 1
     assert cat.pk is not None
     assert cat.slug == "test1"
+
 
 @pytest.mark.django_db
 def test_category_slug_unique(category):
@@ -31,10 +33,5 @@ def test_category_str_repr(category):
 
 @pytest.mark.django_db
 def test_category_get_absolute_url(category):
-    expected_url = reverse('category-detail', kwargs={'pk': category.pk})
+    expected_url = reverse("category-detail", kwargs={"pk": category.pk})
     assert category.get_absolute_url() == expected_url
-
-
-
-
-

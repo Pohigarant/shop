@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models import Sum, Avg, Prefetch, Q, Count, Max, OuterRef, Subquery
-from django.db.models.fields import CharField
 from django.urls import reverse
 from slugify import slugify
 
@@ -8,12 +6,14 @@ from slugify import slugify
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name="Категория")
-    slug = models.SlugField(max_length=255, unique=True, blank=True, verbose_name="URL слаг")
+    slug = models.SlugField(
+        max_length=255, unique=True, blank=True, verbose_name="URL слаг"
+    )
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['name']
+        ordering = ("name")
 
     def __str__(self):
         return self.name
@@ -25,5 +25,4 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        from django.urls import reverse
-        return reverse('category-detail', kwargs={'pk': self.pk})
+        return reverse("category-detail", kwargs={"pk": self.pk})

@@ -1,18 +1,20 @@
-
-from rest_framework import viewsets, request, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from shop1.permissions import IsOwnerOrAdmin
 from users.models import User
-from users.serializers import UserSerializer, RegisterSerializer, CustomTokenObtainPairSerializer
+from users.serializers import (
+    CustomTokenObtainPairSerializer,
+    RegisterSerializer,
+    UserSerializer,
+)
 from users.throttling import RegisterRateThrottle
 
 
@@ -20,7 +22,7 @@ from users.throttling import RegisterRateThrottle
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsOwnerOrAdmin, IsAuthenticated]
+    permission_classes = (IsOwnerOrAdmin, IsAuthenticated)
 
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -29,12 +31,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.filter(pk=self.request.user.pk)
         return User.objects.none()
 
-    @action(detail = False, methods = ['GET','PATCH'])
-    def me(self,request,*args, **kwargs):
+    @action(detail=False, methods=["GET", "PATCH"])
+    def me(self, request, *args, **kwargs):
         user = self.get_object()
-        if request.method == 'GET':
+        if request.method == "GET":
             return Response(UserSerializer(user).data)
-        elif request.method == 'PATCH':
+        elif request.method == "PATCH":
             serializer = UserSerializer(user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -43,8 +45,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserRegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
-    throttle_classes = [RegisterRateThrottle]
+    permission_classes = (AllowAny)
+    throttle_classes = (RegisterRateThrottle)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -53,9 +55,13 @@ class UserRegisterView(CreateAPIView):
         refresh = RefreshToken.for_user(user)
         return Response(
             {
-                'user': {'id': user.id, 'username': user.username, 'email': user.email},
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
             },
             status=status.HTTP_201_CREATED,
         )
@@ -65,11 +71,11 @@ class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        refresh_token = request.data.get('refresh')
+        refresh_token = request.data.get("refresh")
         if not refresh_token:
             return Response(
-                {'detail': 'Refresh token is required.'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Refresh token is required."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
@@ -78,22 +84,16 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except (TokenError, InvalidToken):
             return Response(
-                {'detail': 'Invalid or expired refresh token.'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Invalid or expired refresh token."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
+        except Exception:  # noqa: BLE001
             # Логируйте ошибку для администратора
             return Response(
-                {'detail': 'An internal error occurred.'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"detail": "An internal error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-
-
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
-
-

@@ -1,7 +1,8 @@
 from rest_framework.throttling import SimpleRateThrottle
 
+
 class RegisterRateThrottle(SimpleRateThrottle):
-    rate = '5/hour'
+    rate = "5/hour"
 
     def get_cache_key(self, request, view):
         if not request.user.is_authenticated:

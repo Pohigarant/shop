@@ -1,11 +1,11 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework import routers
-from rest_framework_nested.routers import NestedDefaultRouter
+
 from review.views import ReviewViewSet
 
 router = routers.DefaultRouter()
-router.register('reviews', ReviewViewSet)
+router.register("reviews", ReviewViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

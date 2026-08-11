@@ -14,9 +14,7 @@ def category(db):
 @pytest.fixture
 def product(category):
     return Product.objects.create(
-        name="Laptop",
-        price=999.99,
-        category=category
+        name="Laptop", price=999.99, category=category
     )
 
 
@@ -31,16 +29,11 @@ def test_product_creat(product):
 @pytest.mark.django_db
 def test_product_create(category):
     product = Product.objects.create(
-        name="Smartphone",
-        price=599.99,
-        category=category
+        name="Smartphone", price=599.99, category=category
     )
     assert product.name == "Smartphone"
     assert product.price == 599.99
     assert product.category.name == "Electronics"
-
-
-
 
 
 @pytest.mark.django_db
@@ -48,14 +41,9 @@ def test_create_product_without_fixture():
     """Создание продукта с категорией, созданной прямо в тесте"""
     category = Category.objects.create(name="Books")
     product = Product.objects.create(
-        name="Django Book",
-        price=49.99,
-        category=category
+        name="Django Book", price=49.99, category=category
     )
     assert product.name == "Django Book"
     assert product.price == 49.99
     assert product.category.name == "Books"
     assert Product.objects.count() == 1
-
-
-
