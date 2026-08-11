@@ -20,13 +20,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter
-    filterset_fields = ('category' 'is_active')
+    filterset_fields = ('category', 'is_active')
     search_fields = ('name', 'model', 'article')
     ordering_fields = ('name', 'model', 'price', 'quantity', 'created_at')
     ordering = ('name',)
 
     def get_permissions(self):
-        if self.action in ('list', 'retrieve', 'product_detail'):
+        if self.action in ('list', 'retrieve','popular'):
             return [AllowAny()]
         return [IsAdminUser()]
 
@@ -50,12 +50,4 @@ class ProductViewSet(viewsets.ModelViewSet):
         queryset = queryset.annotate(reviews_count=Count('reviews')).order_by('-reviews_count')[:5]
         serializer = ProductDetailSerializer(queryset, many=True)
         return Response(serializer.data)
-
-    @action(detail = True, methods=['get'])
-    def product_detail(self, request, pk=None):
-        product = self.get_object()
-        reviews = product.reviews.all()
-        serializer = ReviewSerializer(reviews, many=True)
-        return Response(serializer.data)
-
 

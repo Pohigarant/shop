@@ -16,11 +16,8 @@ services:
     env_file: .env
     command: >
       sh -c "uv run python manage.py migrate &&
-
-                  uv run gunicorn shop1.wsgi:application
-
-                  --bind 0.0.0.0:8000 --workers 3 --timeout 60 --access-logfile -"
-
+      uv run gunicorn shop1.wsgi:application
+      --bind 0.0.0.0:8000 --workers 3 --timeout 60 --access-logfile -"
     ports:
       - "8000:8000"
     depends_on:
