@@ -9,7 +9,7 @@ from categories.serializers import CategorySerializer
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    filter_backends = (SearchFilter)
+    filter_backends = (SearchFilter,)
 
     search_fields = ("name", "slug")
 

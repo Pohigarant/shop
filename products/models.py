@@ -39,9 +39,9 @@ class Product(models.Model):
     )
 
     class Meta:
-        verbose_name = "Товар"
-        verbose_name_plural = "Товары"
-        ordering = ("name")
+        verbose_name = ("Товар",)
+        verbose_name_plural = ("Товары",)
+        ordering = ("name",)
 
     def save(self, *args, **kwargs):
         if self.pk:

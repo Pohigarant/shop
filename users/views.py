@@ -45,8 +45,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserRegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
-    permission_classes = (AllowAny)
-    throttle_classes = (RegisterRateThrottle)
+    permission_classes = (AllowAny,)
+    throttle_classes = (RegisterRateThrottle,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

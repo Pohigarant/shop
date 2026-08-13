@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
         )
         read_only_fields = ("id", "date_joined")
-        extra_kwargs = { # noqa: RUF012
+        extra_kwargs = {  # noqa: RUF012
             "password": {
                 "write_only": True,
             }

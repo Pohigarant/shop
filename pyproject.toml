@@ -37,7 +37,7 @@ DJANGO_SETTINGS_MODULE = "shop1.settings"
 
 [tool.ruff]
 line-length = 79
-exclude = ["migrations", ".venv","Тренировка.py"]
+exclude = ["migrations", ".venv","тренировка.py"]
 
 [tool.mypy]
 ignore_missing_imports = true

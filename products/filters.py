@@ -79,7 +79,7 @@ class ProductFilter(filters.FilterSet):
 
     class Meta:
         model = Product
-
+        fields = ()
 
     # ----- Кастомные методы -----
     def filter_search(self, queryset, name, value):

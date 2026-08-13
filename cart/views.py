@@ -11,7 +11,7 @@ from shop1.permissions import IsCartOwnerOrAdmin
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-    permission_classes = (IsCartOwnerOrAdmin)
+    permission_classes = (IsCartOwnerOrAdmin,)
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -21,7 +21,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
 class CartView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = CartSerializer
-    permission_classes = (IsAuthenticated)
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         cart, _ = Cart.objects.get_or_create(user=self.request.user)

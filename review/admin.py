@@ -12,8 +12,8 @@ class ReviewAdmin(admin.ModelAdmin):
         "product__name",
         "user__email",
     )
-    ordering = ("rating")
+    ordering = ("rating",)
 
     list_per_page = 20
-    search_fields = ("rating")
-    list_filter = ("rating")
+    search_fields = ("rating",)
+    list_filter = ("rating",)

@@ -14,4 +14,3 @@ class BuyerAdmin(UserAdmin):
         "is_staff",
         "birth_date",
     )
-

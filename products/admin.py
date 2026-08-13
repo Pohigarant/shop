@@ -17,10 +17,13 @@ class ProductAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "category",
+        "slug"
     )
-    list_display_links = ("id", "name","slug")
+    list_display_links = ("id", "name", "slug")
     ordering = ("name", "created_at")
-    prepopulated_fields: ClassVar[dict[str, tuple[str, ...]]] = {"slug": ("name",)}
+    prepopulated_fields: ClassVar[dict[str, tuple[str, ...]]] = {
+        "slug": ("name",)
+    }
     list_editable = ("is_active", "price", "product_info")
     list_per_page = 20
     list_filter = (
