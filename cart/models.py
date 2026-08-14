@@ -10,7 +10,7 @@ class Cart(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="сart",
+        related_name="cart",
         verbose_name="Покупатель",
     )
 
