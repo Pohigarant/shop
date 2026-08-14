@@ -11,7 +11,7 @@ def existing_category(db):
 
 @pytest.mark.django_db
 def test_categories_list_status(api_client):
-    url = reverse("category-list")
+    url = reverse("categories-list")
     response = api_client.get(url)
     assert response.status_code == 200
 
@@ -27,7 +27,7 @@ def test_categories_list_status(api_client):
 @pytest.mark.django_db
 def test_create_category(request, client_fixture, expected_status):
     client = request.getfixturevalue(client_fixture)
-    url = reverse("category-list")
+    url = reverse("categories-list")
     data = {"name": "Электроника"}
     response = client.post(url, data, format="json")
     assert response.status_code == expected_status  # аноним не имеет прав
@@ -35,7 +35,7 @@ def test_create_category(request, client_fixture, expected_status):
 
 @pytest.mark.django_db
 def test_create_category_admin_succeeds(admin_client):
-    url = reverse("category-list")
+    url = reverse("categories-list")
     data = {"name": "Электроника"}
     response = admin_client.post(url, data, format="json")
     assert response.status_code == 201
@@ -57,7 +57,7 @@ def test_update_category(
     request, client_fixture, expected_status, existing_category
 ):
     client = request.getfixturevalue(client_fixture)
-    url = reverse("category-detail", kwargs={"pk": existing_category.id})
+    url = reverse("categories-detail", kwargs={"pk": existing_category.id})
     data = {"name": "Новое название"}
     response = client.put(url, data, format="json")
     assert response.status_code == expected_status
@@ -76,7 +76,7 @@ def test_update_category_patch(
     request, client_fixture, expected_status, existing_category
 ):
     client = request.getfixturevalue(client_fixture)
-    url = reverse("category-detail", kwargs={"pk": existing_category.id})
+    url = reverse("categories-detail", kwargs={"pk": existing_category.id})
     data = {"name": "Новое название"}
     response = client.patch(url, data, format="json")
     assert response.status_code == expected_status
@@ -84,7 +84,7 @@ def test_update_category_patch(
 
 @pytest.mark.django_db
 def test_update_category_admin_succeeds(admin_client, existing_category):
-    url = reverse("category-detail", kwargs={"pk": existing_category.id})
+    url = reverse("categories-detail", kwargs={"pk": existing_category.id})
     data = {"name": "Обновлённое имя"}
     response = admin_client.put(url, data, format="json")
     assert response.status_code == 200
@@ -98,7 +98,7 @@ def test_update_category_admin_succeeds(admin_client, existing_category):
 def test_partial_update_category_admin_succeeds(
     admin_client, existing_category
 ):
-    url = reverse("category-detail", kwargs={"pk": existing_category.id})
+    url = reverse("categories-detail", kwargs={"pk": existing_category.id})
     data = {"name": "Частично обновлено"}
     response = admin_client.patch(url, data, format="json")
     assert response.status_code == 200
@@ -110,7 +110,7 @@ def test_partial_update_category_admin_succeeds(
 
 @pytest.mark.django_db
 def test_delete_category_admin_succeeds(admin_client, existing_category):
-    url = reverse("category-detail", kwargs={"pk": existing_category.id})
+    url = reverse("categories-detail", kwargs={"pk": existing_category.id})
     response = admin_client.delete(url)
     assert response.status_code == 204
 

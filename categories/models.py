@@ -25,4 +25,4 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("category-detail", kwargs={"pk": self.pk})
+        return reverse("categories-detail", kwargs={"pk": self.pk})
