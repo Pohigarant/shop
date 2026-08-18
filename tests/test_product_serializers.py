@@ -2,7 +2,7 @@ import pytest
 
 from categories.models import Category
 from products.models import Product
-from products.serializers import ProductSerializer
+from products.serializers import ProductDetailSerializer
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ def product(category):
 
 @pytest.mark.django_db
 def test_product_creat(product):
-    serializer = ProductSerializer(instance=product)
+    serializer = ProductDetailSerializer(instance=product)
     data = serializer.data
     assert data["name"] == product.name
     assert data["category"]["name"] == product.category.name

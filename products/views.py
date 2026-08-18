@@ -12,14 +12,12 @@ from products.models import Product
 from products.serializers import (
     ProductDetailSerializer,
     ProductListSerializer,
-    ProductSerializer,
 )
 
 
 # Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter

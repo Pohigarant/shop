@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, Sequence
 
 from django.contrib import admin
 
@@ -21,7 +21,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
     list_display_links = ("id", "name", "slug")
     ordering = ("name", "created_at")
-    prepopulated_fields: ClassVar[dict[str, tuple[str, ...]]] = {
+    prepopulated_fields: ClassVar[dict[str, Sequence[str]]] = {
         "slug": ("name",)
     }
     list_editable = ("is_active", "price", "product_info")

@@ -33,7 +33,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["GET", "PATCH"])
     def me(self, request, *args, **kwargs):
-        user = self.get_object()
+        user = request.user
         if request.method == "GET":
             return Response(UserSerializer(user).data)
         elif request.method == "PATCH":
