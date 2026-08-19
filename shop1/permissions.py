@@ -1,6 +1,7 @@
 from rest_framework import permissions
 
 from cart.models import CartItem
+from order.models import OrderItem
 from products.models import Product
 
 
@@ -22,7 +23,6 @@ class IsCartOwnerOrAdmin(permissions.BasePermission):
     message = "Вы не можете редактировать"
 
     def has_object_permission(self, request, view, obj):
-
         return obj.cart.user == request.user or request.user.is_staff
 
 
@@ -38,6 +38,8 @@ class HasPurchasedProduct(permissions.BasePermission):
         except Product.DoesNotExist:
             return False
 
-        return CartItem.objects.filter(
-            cart__user=user, product=product
+        return OrderItem.objects.filter(
+
+            order__user=user, order__status="delivered", product=product
+
         ).exists()
