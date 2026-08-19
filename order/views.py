@@ -1,5 +1,7 @@
+from django.db import transaction
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -22,12 +24,20 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Order.objects.filter(user=self.request.user)
         return Order.objects.none()
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
-        user = request.user
-        cart, _ = Cart.objects.get_or_create(user=user)
-        if not cart.items.exists():
+        cart = get_object_or_404(Cart, user=request.user)
+        items = list(cart.items.select_related("product").select_for_update())
+        if not items:
             raise serializers.ValidationError("Корзина пуста")
-        order = Order.objects.create(user=user, total_price=0)
+        for item in items:
+            if item.product.quantity < item.quantity:
+                raise serializers.ValidationError(
+
+                    f"Недостаточно товара «{item.product.name}»")
+
+
+        order = Order.objects.create(user=request.user, total_price=0)
 
         total = 0
         for item in cart.items.all():
