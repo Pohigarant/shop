@@ -1,7 +1,7 @@
 from django.db import models
 
 from products.models import Product
-from shop1 import settings
+from django.conf import settings
 
 status_choices = [
     ("pending", "pending"),
