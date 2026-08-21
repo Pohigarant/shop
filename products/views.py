@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from products.filters import ProductFilter
 from products.models import Product
+from products.pagination import ProductPagination
 from products.serializers import (
     ProductDetailSerializer,
     ProductListSerializer,
@@ -18,7 +19,7 @@ from products.serializers import (
 # Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = ProductPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter
     filterset_fields = ("category", "is_active")
