@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from products.models import Product
 from review.models import Review
+from review.pagination import ReviewPagination
 from review.serializers import ReviewSerializer
 from shop1.permissions import HasPurchasedProduct, IsOwnerOrAdmin
 
@@ -15,7 +16,7 @@ from shop1.permissions import HasPurchasedProduct, IsOwnerOrAdmin
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = ReviewPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ("product__name",)  # для фильтрации по имени продукта
     search_fields = (
@@ -23,7 +24,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         "product__name",
     )  # для поиска по тексту и по имени продукта
     ordering_fields = (
-        "-created_at",
+        "created_at",
         "rating",
     )  # поля для сортировки по дате осзданя и по рейтингу
     ordering = ("-created_at",)
@@ -41,10 +42,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         product_pk = self.kwargs.get("prod_pk")
         user_pk = self.kwargs.get("user_pk")
         if product_pk:
-            return Review.objects.filter(product_id=product_pk)
+            return Review.objects.filter(product_id=product_pk).select_related('user', 'product')
         if user_pk:
-            return Review.objects.filter(user_id=user_pk)
-        return Review.objects.all()
+            return Review.objects.filter(user_id=user_pk).select_related('user', 'product')
+        return Review.objects.all().select_related('user', 'product')
 
     def perform_create(self, serializer):
         prod_pk = self.kwargs.get("prod_pk")

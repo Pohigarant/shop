@@ -7,7 +7,7 @@ from review.models import Review
 class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
     product = serializers.SlugRelatedField(
-        slug_field="name", queryset=Product.objects.all()
+        slug_field="name", queryset=Product.objects.all(),read_only=True
     )
 
     class Meta:
