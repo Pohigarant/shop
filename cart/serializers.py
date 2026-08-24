@@ -8,9 +8,7 @@ class CartItemSerializer(serializers.ModelSerializer):
     product_name = serializers.SerializerMethodField(read_only=True)
     product_price = serializers.SerializerMethodField(read_only=True)
     item_total_price = serializers.SerializerMethodField(read_only=True)
-    cart = serializers.PrimaryKeyRelatedField(
-        queryset=Cart.objects.all(), write_only=True
-    )
+    cart = serializers.PrimaryKeyRelatedField(read_only=True)
     product = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.all(), write_only=True
     )

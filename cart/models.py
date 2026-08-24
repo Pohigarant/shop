@@ -51,3 +51,6 @@ class CartItem(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
         unique_together = (("cart", "product"),)
+
+    def __str__(self):
+        return f"{self.product.name} x{self.quantity}"

@@ -15,8 +15,18 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return CartItem.objects.filter(cart__user=self.request.user)
+            return CartItem.objects.filter(cart__user=self.request.user).select_related('product')
         return CartItem.objects.none()
+
+    def perform_create(self, serializer):
+        cart, _ = Cart.objects.get_or_create(user=self.request.user)
+        serializer.save(cart=cart)
+        return serializer
+
+    def perform_update(self, serializer):
+        cart, _ = Cart.objects.get_or_create(user=self.request.user)
+        serializer.save(cart=cart)
+        return serializer
 
 
 class CartView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -25,6 +35,7 @@ class CartView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def get_object(self):
         cart, _ = Cart.objects.get_or_create(user=self.request.user)
+        cart = Cart.objects.prefetch_related('items__product').get(pk=cart.pk)
         return cart
 
     @action(detail=False, methods=["get"])
