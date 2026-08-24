@@ -26,6 +26,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     search_fields = ("name", "model", "article")
     ordering_fields = ("name", "model", "price", "quantity", "created_at")
     ordering = ("name",)
+    throttle_scope = "product_search"
 
     def get_permissions(self):
         if self.action in ("list", "retrieve", "popular"):
