@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
@@ -22,7 +23,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = ProductPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter
-    filterset_fields = ("category", "is_active")
+    #filterset_fields = ("category", "is_active")
     search_fields = ("name", "model", "article")
     ordering_fields = ("name", "model", "price", "quantity", "created_at")
     ordering = ("name",)
@@ -41,16 +42,27 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductListSerializer
 
     def get_queryset(self):
-        category_pk = self.kwargs.get("category_pk")
+        qs = Product.objects.select_related('category')
+        category_pk = self.kwargs.get('category_pk')
         if category_pk:
-            return Product.objects.filter(category_id=category_pk)
-        return Product.objects.all()
+            return qs.filter(category_id=category_pk)
+        return qs
+        # category_pk = self.kwargs.get("category_pk")
+        # if category_pk:
+        #     return Product.objects.filter(category_id=category_pk)
+        # return Product.objects.all()
 
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def popular(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        queryset = queryset.annotate(reviews_count=Count("reviews")).order_by(
-            "-reviews_count"
-        )[:5]
+        queryset = (
+            queryset
+            .select_related('category')
+            .annotate(
+                reviews_count=Count('reviews'),
+                average_rating=Avg('reviews__rating')
+            )
+            .order_by('-reviews_count')[:5]
+        )
         serializer = ProductDetailSerializer(queryset, many=True)
         return Response(serializer.data)

@@ -32,13 +32,24 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             )
         return value
 
+    # @staticmethod
+    # def get_reviews_count(obj):
+    #     return obj.reviews.count()
+    #
+    # @staticmethod
+    # def get_average_rating(obj):
+    #     return obj.reviews.aggregate(Avg("rating"))["rating__avg"]
+
     @staticmethod
     def get_reviews_count(obj):
-        return obj.reviews.count()
+        return getattr(obj, 'reviews_count', obj.reviews.count())
 
     @staticmethod
     def get_average_rating(obj):
-        return obj.reviews.aggregate(Avg("rating"))["rating__avg"]
+        avg = getattr(obj, 'average_rating', None)
+        if avg is None:
+            avg = obj.reviews.aggregate(Avg('rating'))['rating__avg']
+        return avg
 
 
 class ProductListSerializer(serializers.ModelSerializer):
