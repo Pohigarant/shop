@@ -59,7 +59,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset
             .select_related('category')
             .annotate(
-                reviews_count=Count('reviews'),
+                reviews_count=Count('reviews', distinct=True),
                 average_rating=Avg('reviews__rating')
             )
             .order_by('-reviews_count')[:5]
