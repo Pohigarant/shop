@@ -17,21 +17,19 @@ def user(db):
 @pytest.fixture
 def admin_user(db):
     User = get_user_model()
-    return User.objects.create_user(
-        username="admin",
-        password="adminpass",
-        is_staff=True,  # даём права администратора
-        # is_superuser=True  # можно и так, но staff обычно достаточно
-    )
+    return User.objects.create_superuser(username="admin", password="adminpass")
+
 
 
 @pytest.fixture
 def auth_client(api_client, user):
-    api_client.force_authenticate(user=user)
-    return api_client
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
 
 
 @pytest.fixture
 def admin_client(api_client, admin_user):
-    api_client.force_authenticate(user=admin_user)
-    return api_client
+    client = APIClient()
+    client.force_authenticate(user=admin_user)
+    return client
