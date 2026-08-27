@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import F
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -25,37 +26,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Order.objects.filter(user=self.request.user)
         return Order.objects.none()
 
-    # @transaction.atomic
-    # def create(self, request, *args, **kwargs):
-    #     cart = get_object_or_404(Cart, user=request.user)
-    #     items = list(cart.items.select_related("product").select_for_update())
-    #     if not items:
-    #         raise serializers.ValidationError("Корзина пуста")
-    #     for item in items:
-    #         if item.product.quantity < item.quantity:
-    #             raise serializers.ValidationError(
-    #
-    #                 f"Недостаточно товара «{item.product.name}»")
-    #
-    #
-    #     order = Order.objects.create(user=request.user, total_price=0)
-    #
-    #     total = 0
-    #     for item in cart.items.all():
-    #         order_item = OrderItem.objects.create(
-    #             order=order,
-    #             product=item.product,
-    #             quantity=item.quantity,
-    #             price_at_purchase=item.product.price,
-    #         )
-    #         total += order_item.quantity * order_item.product.price
-    #
-    #     order.total_price = total
-    #     order.save()
-    #
-    #     cart.items.all().delete()
-    #     serializer = self.get_serializer(order)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -75,26 +45,26 @@ class OrderViewSet(viewsets.ModelViewSet):
             Product.objects.filter(pk=product.pk).update(
                 quantity=F("quantity") - item.quantity
             )
-            order = Order.objects.create(user=request.user, total_price=0)
-            total = 0
-            for item in items:
-               order_item = OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    quantity=item.quantity,
-                    price_at_purchase=item.product.price,
+        order = Order.objects.create(user=request.user, total_price=0)
+        total = 0
+        for item1 in items:
+            order_item = OrderItem.objects.create(
+                order=order,
+                product=item1.product,
+                quantity=item1.quantity,
+                price_at_purchase=item1.product.price,
                 )
             total += order_item.quantity * order_item.price_at_purchase
 
-            order.total_price = total
-            order.save(update_fields=["total_price"])
+        order.total_price = total
+        order.save(update_fields=["total_price"])
 
 
-            CartItem.objects.filter(pk__in=[item.pk for item in items]).delete()
+        CartItem.objects.filter(pk__in=[item.pk for item in items]).delete()
 
 
-            serializer = self.get_serializer(order)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = self.get_serializer(order)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])
     def cancel(self, request, pk=None):

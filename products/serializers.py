@@ -8,8 +8,8 @@ from products.models import Product
 class ProductDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     # category = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    reviews_count = serializers.SerializerMethodField()
-    average_rating = serializers.SerializerMethodField()
+    reviews_count = serializers.IntegerField(read_only=True)
+    average_rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Product
@@ -32,24 +32,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             )
         return value
 
-    # @staticmethod
-    # def get_reviews_count(obj):
-    #     return obj.reviews.count()
-    #
-    # @staticmethod
-    # def get_average_rating(obj):
-    #     return obj.reviews.aggregate(Avg("rating"))["rating__avg"]
-
-    @staticmethod
-    def get_reviews_count(obj):
-        return getattr(obj, 'reviews_count', obj.reviews.count())
-
-    @staticmethod
-    def get_average_rating(obj):
-        avg = getattr(obj, 'average_rating', None)
-        if avg is None:
-            avg = obj.reviews.aggregate(Avg('rating'))['rating__avg']
-        return avg
 
 
 class ProductListSerializer(serializers.ModelSerializer):

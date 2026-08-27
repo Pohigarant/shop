@@ -23,7 +23,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = ProductPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ProductFilter
-    #filterset_fields = ("category", "is_active")
+    # filterset_fields = ("category", "is_active")
     search_fields = ("name", "model", "article")
     ordering_fields = ("name", "model", "price", "quantity", "created_at")
     ordering = ("name",)
@@ -42,27 +42,14 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductListSerializer
 
     def get_queryset(self):
-        qs = Product.objects.select_related('category')
-        category_pk = self.kwargs.get('category_pk')
-        if category_pk:
-            return qs.filter(category_id=category_pk)
-        return qs
-        # category_pk = self.kwargs.get("category_pk")
-        # if category_pk:
-        #     return Product.objects.filter(category_id=category_pk)
-        # return Product.objects.all()
+        queryset = Product.objects.select_related("category").annotate(reviews_count=Count("reviews", distinct=True),
+                                                                       average_rating=Avg("reviews__rating"))
+
+        return queryset
 
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def popular(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        queryset = (
-            queryset
-            .select_related('category')
-            .annotate(
-                reviews_count=Count('reviews', distinct=True),
-                average_rating=Avg('reviews__rating')
-            )
-            .order_by('-reviews_count')[:5]
-        )
+        queryset = queryset.order_by("-average_rating")[:5]
         serializer = ProductDetailSerializer(queryset, many=True)
         return Response(serializer.data)

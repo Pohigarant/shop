@@ -171,7 +171,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "5/day",  # для анонимных пользователей
+        "anon": "100/day",  # для анонимных пользователей
         "user": "200/hour",  # для авторизованных пользователей
 
         "product_search":"100/hour"
