@@ -35,3 +35,13 @@ def test_category_str_repr(category):
 def test_category_get_absolute_url(category):
     expected_url = reverse("categories-detail", kwargs={"pk": category.pk})
     assert category.get_absolute_url() == expected_url
+
+@pytest.mark.django_db
+def test_category_get_slug():
+    cat=Category.objects.create(name="test")
+    old_slug = cat.slug
+    cat.name = "test1"
+    cat.save()
+    cat.refresh_from_db()
+    assert cat.slug != old_slug
+    assert cat.slug == "test1"

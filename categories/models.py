@@ -19,9 +19,13 @@ class Category(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Если slug не передан (пустая строка) — генерируем из name
-        if not self.slug:
-            self.slug = slugify(self.name)
+        if self.pk:
+            old = Category.objects.get(pk=self.pk)
+            if old.name != self.name:
+                self.slug = slugify(self.name)
+        else:
+            if not self.slug:
+                self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
