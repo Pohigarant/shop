@@ -1,7 +1,5 @@
 import pytest
 from django.db import IntegrityError
-from django.urls import reverse
-
 from cart.models import Cart, CartItem
 from categories.models import Category
 from products.models import Product

@@ -1,10 +1,9 @@
 import pytest
 from django.contrib.auth import get_user_model
-
 from categories.models import Category
 from products.models import Product
 from products.serializers import ProductDetailSerializer
-from review.models import Review
+
 
 
 @pytest.fixture

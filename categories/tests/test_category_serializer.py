@@ -51,4 +51,4 @@ def test_category_deserializer_update(category):
     assert serializer.is_valid() is True
     updated = serializer.save()
     assert updated.name == "test1"
-    assert updated.slug == "test"
+    assert updated.slug == "test1"

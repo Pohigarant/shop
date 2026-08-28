@@ -1,7 +1,4 @@
 import pytest
-from django.db import IntegrityError
-from django.urls import reverse
-
 from cart.models import Cart, CartItem
 from cart.serializers import CartItemSerializer, CartSerializer
 from categories.models import Category
