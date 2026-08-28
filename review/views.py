@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from products.models import Product
@@ -42,10 +41,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
         product_pk = self.kwargs.get("prod_pk")
         user_pk = self.kwargs.get("user_pk")
         if product_pk:
-            return Review.objects.filter(product_id=product_pk).select_related('user', 'product')
+            return Review.objects.filter(product_id=product_pk).select_related(
+                "user", "product"
+            )
         if user_pk:
-            return Review.objects.filter(user_id=user_pk).select_related('user', 'product')
-        return Review.objects.all().select_related('user', 'product')
+            return Review.objects.filter(user_id=user_pk).select_related(
+                "user", "product"
+            )
+        return Review.objects.all().select_related("user", "product")
 
     def perform_create(self, serializer):
         prod_pk = self.kwargs.get("prod_pk")

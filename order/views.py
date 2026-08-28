@@ -26,7 +26,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Order.objects.filter(user=self.request.user)
         return Order.objects.none()
 
-
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         cart = get_object_or_404(Cart, user=request.user)
@@ -34,7 +33,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         if not items:
             raise serializers.ValidationError("Корзина пуста")
         product_ids = [item.product_id for item in items]
-        products = Product.objects.select_for_update().filter(id__in=product_ids)
+        products = Product.objects.select_for_update().filter(
+            id__in=product_ids
+        )
         product_map = {p.id: p for p in products}
         for item in items:
             product = product_map[item.product_id]
@@ -53,15 +54,13 @@ class OrderViewSet(viewsets.ModelViewSet):
                 product=item1.product,
                 quantity=item1.quantity,
                 price_at_purchase=item1.product.price,
-                )
+            )
             total += order_item.quantity * order_item.price_at_purchase
 
         order.total_price = total
         order.save(update_fields=["total_price"])
 
-
         CartItem.objects.filter(pk__in=[item.pk for item in items]).delete()
-
 
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

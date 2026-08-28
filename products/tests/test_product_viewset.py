@@ -17,6 +17,7 @@ def product(category):
     )
 
 
+@pytest.mark.django_db
 def test_list_is_public(api_client, product):
     response = api_client.get(reverse("product-list"))
     assert response.status_code == 200
@@ -24,9 +25,10 @@ def test_list_is_public(api_client, product):
     assert response.data["results"][0]["name"] == "Test Product"
 
 
+@pytest.mark.django_db
 def test_retrieve_is_public(api_client, product):
     response = api_client.get(
-        reverse("product-detail", kwargs={"pk": product.pk})
+        reverse("product-detail", kwargs={"slug": product.slug})
     )
     assert response.status_code == 200
     assert response.data["name"] == "Test Product"
@@ -48,6 +50,7 @@ def test_created_permissions(request, client_fixture, exepted_status):
     assert response.status_code == exepted_status
 
 
+@pytest.mark.django_db
 def test_popular_is_public(api_client, product):
     response = api_client.get(reverse("product-popular"))
     assert response.status_code == 200
@@ -75,7 +78,7 @@ def test_list_uses_list_serializer(api_client, product):
 @pytest.mark.django_db
 def test_delete_product(request, client_fixture, product, exepted_status):
     client = request.getfixturevalue(client_fixture)
-    url = reverse("product-detail", kwargs={"pk": product.pk})
+    url = reverse("product-detail", kwargs={"slug": product.slug})
     response = client.delete(url)
     assert response.status_code == exepted_status
 
@@ -91,7 +94,7 @@ def test_delete_product(request, client_fixture, product, exepted_status):
 @pytest.mark.django_db
 def test_update_product(request, client_fixture, product, exepted_status):
     client = request.getfixturevalue(client_fixture)
-    url = reverse("product-detail", kwargs={"pk": product.pk})
+    url = reverse("product-detail", kwargs={"slug": product.slug})
     data = {"name": "New Product", "price": 5.00}
     response = client.patch(url, data, format="json")
     assert response.status_code == exepted_status

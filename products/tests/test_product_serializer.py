@@ -1,9 +1,9 @@
 import pytest
 from django.contrib.auth import get_user_model
+
 from categories.models import Category
 from products.models import Product
 from products.serializers import ProductDetailSerializer
-
 
 
 @pytest.fixture
@@ -54,8 +54,8 @@ def test_product_serializer_create_product():
 
 @pytest.mark.django_db
 def test_product_serializer_update_product(product):
-    data = {"price":197}
-    serializer = ProductDetailSerializer(product, data=data,partial=True)
+    data = {"price": 197}
+    serializer = ProductDetailSerializer(product, data=data, partial=True)
     assert serializer.is_valid() is True
     product = serializer.save()
     assert product.name == "test"
@@ -64,10 +64,11 @@ def test_product_serializer_update_product(product):
 
 @pytest.mark.django_db
 def test_serializer_empty_name():
-    data={"name": "", "price": 500}
+    data = {"name": "", "price": 500}
     serializer = ProductDetailSerializer(data=data)
     assert serializer.is_valid() is False
     assert "name" in serializer.errors
+
 
 @pytest.mark.django_db
 def test_product_serializer_low_quanty():
@@ -97,8 +98,6 @@ def test_product_serializer_read_only():
     assert str(product.created_at) != "2020-01-01T00:00:00Z"
     assert serializer.data.get("reviews_count") != 100
     assert serializer.data.get("average_rating") != 9.9
-
-
 
 
 # @pytest.mark.django_db

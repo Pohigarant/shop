@@ -1,4 +1,5 @@
 import pytest
+
 from cart.models import Cart, CartItem
 from cart.serializers import CartItemSerializer, CartSerializer
 from categories.models import Category
@@ -18,7 +19,9 @@ def category(db):
 
 @pytest.fixture
 def product(db, category):
-    return Product.objects.create(name="test1", price=100, quantity=10, category=category)
+    return Product.objects.create(
+        name="test1", price=100, quantity=10, category=category
+    )
 
 
 @pytest.fixture
@@ -27,7 +30,7 @@ def cartitem(cart, product):
 
 
 @pytest.mark.django_db
-def test_cart_serializer_with_items(cart, cartitem,product):
+def test_cart_serializer_with_items(cart, cartitem, product):
     serializer = CartSerializer(cart)
     data = serializer.data
 
@@ -44,7 +47,6 @@ def test_cart_serializer_with_items(cart, cartitem,product):
 @pytest.mark.django_db
 def test_cart_item_serializer_create(cart, product):
     data = {
-
         "product": product.id,
         "quantity": 2,
     }
@@ -59,8 +61,8 @@ def test_cart_item_serializer_create(cart, product):
 
 @pytest.mark.django_db
 def test_cart_total_price_multiple_items(cart):
-    product1=Product.objects.create(name="test1", price=100, quantity=1)
-    product2=Product.objects.create(name="test2", price=200, quantity=2)
+    product1 = Product.objects.create(name="test1", price=100, quantity=1)
+    product2 = Product.objects.create(name="test2", price=200, quantity=2)
     CartItem.objects.create(cart=cart, product=product1, quantity=1)
     CartItem.objects.create(cart=cart, product=product2, quantity=2)
     serializer = CartSerializer(cart)
@@ -68,10 +70,10 @@ def test_cart_total_price_multiple_items(cart):
     assert len(data["items"]) == 2
     assert data["total_price"] == 500
 
-@pytest.mark.django_db
-def test_cart_item_serializer_missing_product(cart,product):
-    data = {
 
+@pytest.mark.django_db
+def test_cart_item_serializer_missing_product(cart, product):
+    data = {
         "quantity": 2,
     }
     serializer = CartItemSerializer(data=data)

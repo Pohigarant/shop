@@ -9,8 +9,8 @@ router = routers.DefaultRouter()
 router.register("categories", CategoryViewSet, basename="categories")
 
 product_router = NestedDefaultRouter(router, r"categories", lookup="category")
-product_router.register(r"products", ProductViewSet, basename="category-products"
-
+product_router.register(
+    r"products", ProductViewSet, basename="category-products"
 )
 urlpatterns = [
     path("", include(router.urls)),

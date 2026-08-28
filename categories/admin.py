@@ -1,4 +1,5 @@
-from typing import ClassVar, Mapping, Sequence
+from collections.abc import Sequence
+from typing import ClassVar
 
 from django.contrib import admin
 

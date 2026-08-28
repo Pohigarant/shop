@@ -307,3 +307,6 @@ http-client.private.env.json
 .idea/**/copilot.data.migration.*.xml
 
 staticfiles/
+fill_all_products.py
+fill_reviews.py
+tren.py

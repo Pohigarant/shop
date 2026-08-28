@@ -1,4 +1,3 @@
-from django.db.models import Avg
 from rest_framework import serializers
 
 from categories.serializers import CategorySerializer
@@ -31,7 +30,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
                 "Цена не может быть отрицательной"
             )
         return value
-
 
 
 class ProductListSerializer(serializers.ModelSerializer):

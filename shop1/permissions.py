@@ -1,6 +1,5 @@
 from rest_framework import permissions
 
-from cart.models import CartItem
 from order.models import OrderItem
 from products.models import Product
 
@@ -39,7 +38,5 @@ class HasPurchasedProduct(permissions.BasePermission):
             return False
 
         return OrderItem.objects.filter(
-
             order__user=user, order__status="delivered", product=product
-
         ).exists()

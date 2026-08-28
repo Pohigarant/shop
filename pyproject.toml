@@ -41,3 +41,8 @@ exclude = ["migrations", ".venv","тренировка.py"]
 
 [tool.mypy]
 ignore_missing_imports = true
+disable_error_code = ["var-annotated"] #май пай не будет рукгаться при ошибки аннотации типов
+
+[tool.coverage.report]   # если тесты покрывают меньше 80 процентов пайтест бы ругался
+fail_under = 80
+show_missing = true

@@ -4,7 +4,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
@@ -43,8 +42,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductListSerializer
 
     def get_queryset(self):
-        queryset = Product.objects.select_related("category").annotate(reviews_count=Count("reviews", distinct=True),
-                                                                       average_rating=Avg("reviews__rating"))
+        queryset = Product.objects.select_related("category").annotate(
+            reviews_count=Count("reviews", distinct=True),
+            average_rating=Avg("reviews__rating"),
+        )
 
         return queryset
 

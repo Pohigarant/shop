@@ -1,4 +1,5 @@
-from typing import ClassVar, Sequence
+from collections.abc import Sequence
+from typing import ClassVar
 
 from django.contrib import admin
 
@@ -17,7 +18,7 @@ class ProductAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "category",
-        "slug"
+        "slug",
     )
     list_display_links = ("id", "name", "slug")
     ordering = ("name", "created_at")

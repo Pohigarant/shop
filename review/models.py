@@ -33,9 +33,11 @@ class Review(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-        constraints = [UniqueConstraint(fields=["user", "product"],name='unique_employee_fullname')]
-
-
+        constraints = (
+            UniqueConstraint(
+                fields=["user", "product"], name="unique_employee_fullname"
+            ),
+        )
 
     def __str__(self):
         return f"Отзыв от {self.user.username}"
