@@ -1,3 +1,9 @@
 .venv
 .git
 .idea
+.env
+# Локальная база SQLite
+db.sqlite3
+#кэш пайтона
+__pycache__
+*.pyc
