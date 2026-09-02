@@ -22,9 +22,9 @@ repos:
         types: [python]
         pass_filenames: false
 
-#      - id: pytest
-#        name: pytest --cov
-#        entry: uv run pytest --cov=.
-#        language: system
-#        types: [python]
-#        pass_filenames: false
+      - id: pytest
+        name: pytest --cov
+        entry: uv run pytest --cov=.
+        language: system
+        types: [python]
+        pass_filenames: false
