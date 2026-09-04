@@ -19,6 +19,7 @@ dependencies = [
     "pytest-django>=4.12.0",
     "python-dotenv>=1.2.2",
     "python-slugify>=8.0.4",
+    "redis>=8.1.0",
     "requests>=2.33.1",
     "types-django-filter>=26.1.0.20260713",
     "whitenoise>=6.12.0",
