@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Avg
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,6 +15,8 @@ from products.serializers import (
     ProductDetailSerializer,
     ProductListSerializer,
 )
+
+CACHE_KEY_POPULAR = "products:popular:v1"
 
 
 # Create your views here.
@@ -51,7 +54,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def popular(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        queryset = queryset.order_by("-average_rating")[:5]
-        serializer = ProductDetailSerializer(queryset, many=True)
-        return Response(serializer.data)
+        data = cache.get(CACHE_KEY_POPULAR)
+        if data is None:
+            queryset = self.get_queryset().order_by("-average_rating")[:5]
+            data = ProductDetailSerializer(queryset, many=True).data
+            cache.set(CACHE_KEY_POPULAR, data)
+        return Response(data)

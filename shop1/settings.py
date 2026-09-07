@@ -87,7 +87,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "shop1.wsgi.application"
 
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+##https: // docs.djangoproject.com / en / 6.0 / ref / settings /  # databases
 
 if os.environ.get("POSTGRES_DB"):
     DATABASES = {
