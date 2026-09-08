@@ -3,6 +3,8 @@ import pytest
 from categories.models import Category
 from categories.serializers import CategorySerializer
 
+pytestmark = pytest.mark.redis
+
 
 @pytest.fixture
 def category(db):

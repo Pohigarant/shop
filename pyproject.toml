@@ -34,6 +34,12 @@ dev = [
 ]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "shop1.settings"
+markers = [
+
+    "redis: тесту нужен запущенный redis (pytest -m redis)",
+
+]
+
 
 
 [tool.ruff]

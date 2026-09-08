@@ -5,6 +5,8 @@ from cart.serializers import CartItemSerializer, CartSerializer
 from categories.models import Category
 from products.models import Product
 
+pytestmark = pytest.mark.redis
+
 
 @pytest.fixture
 def cart(user):

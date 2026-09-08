@@ -4,6 +4,8 @@ from categories.models import Category
 from products.models import Product
 from review.models import Review
 
+pytestmark = pytest.mark.redis
+
 
 @pytest.fixture
 def category(db):

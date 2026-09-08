@@ -5,6 +5,8 @@ from django.urls import reverse
 from categories.models import Category
 from products.models import Product
 
+pytestmark = pytest.mark.redis
+
 
 @pytest.fixture
 def category(db):

@@ -5,6 +5,8 @@ from categories.models import Category
 from products.models import Product
 from products.serializers import ProductDetailSerializer
 
+pytestmark = pytest.mark.redis
+
 
 @pytest.fixture
 def user(db):

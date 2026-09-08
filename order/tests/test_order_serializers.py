@@ -5,6 +5,8 @@ from order.models import Order, OrderItem
 from order.serializers import OrderItemSerializer, OrderSerializer
 from products.models import Product
 
+pytestmark = pytest.mark.redis
+
 
 @pytest.fixture
 def category(db):
