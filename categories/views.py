@@ -23,9 +23,27 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return [IsAdminUser()]
 
     def list(self, request, *args, **kwargs):
+        # Кэшируем только полный список. С ?search= или ?page= ответ зависит
+        # от параметров запроса, а ключ один на всех — иначе клиент получил
+        # бы чужой результат.
+        if request.query_params:
+            return super().list(request, *args, **kwargs)
+
         data = cache.get(CACHE_KEY_CATEGORY)
         if data is None:
             response = super().list(request, *args, **kwargs)
             data = response.data
             cache.set(CACHE_KEY_CATEGORY, data, timeout=60)
         return Response(data)
+
+    def perform_create(self, serializer):
+        serializer.save()
+        cache.delete(CACHE_KEY_CATEGORY)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        cache.delete(CACHE_KEY_CATEGORY)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        cache.delete(CACHE_KEY_CATEGORY)

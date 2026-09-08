@@ -15,6 +15,11 @@ def _locmem_cache(settings):
             "LOCATION": "tests",
         }
     }
+    # LocMemCache хранит данные в глобальном словаре по LOCATION, поэтому
+    # без явной очистки кэш переживает тест и портит следующие.
+    caches["default"].clear()
+    yield
+    caches["default"].clear()
 
 
 @pytest.fixture
