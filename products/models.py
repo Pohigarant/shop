@@ -38,6 +38,11 @@ class Product(models.Model):
         auto_now=True, verbose_name="Дата обновления"
     )
 
+    average_rating = models.DecimalField(
+        max_digits=4, decimal_places=2, default=0
+    )
+    reviews_count = models.PositiveIntegerField(default=0)
+
     class Meta:
         verbose_name = ("Товар",)
         verbose_name_plural = ("Товары",)

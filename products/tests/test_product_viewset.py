@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from categories.models import Category
 from products.models import Product
+from review.models import Review
 
 pytestmark = pytest.mark.redis
 
@@ -100,3 +101,11 @@ def test_update_product(request, client_fixture, product, exepted_status):
     data = {"name": "New Product", "price": 5.00}
     response = client.patch(url, data, format="json")
     assert response.status_code == exepted_status
+
+
+@pytest.mark.django_db(transaction=True)
+def test_rating_updates_on_review(product, user):
+    Review.objects.create(product=product, user=user, rating=4, text="ок")
+    product.refresh_from_db()
+    assert product.reviews_count == 1
+    assert product.average_rating == 4

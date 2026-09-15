@@ -1,6 +1,4 @@
 from django.core.cache import cache
-from django.db.models import Avg
-from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -45,11 +43,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductListSerializer
 
     def get_queryset(self):
-        queryset = Product.objects.select_related("category").annotate(
-            reviews_count=Count("reviews", distinct=True),
-            average_rating=Avg("reviews__rating"),
-        )
-
+        queryset = Product.objects.select_related("category")
         return queryset
 
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])

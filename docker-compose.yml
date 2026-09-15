@@ -40,7 +40,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-
+  worker:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    command: uv run celery -A shop1 worker -l info
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 volumes:
   postgres_data:
   venv_data:

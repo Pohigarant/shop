@@ -234,3 +234,10 @@ CACHES = {
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+CELERY_BROKER_URL = f"{REDIS_URL}/0"  # очередь — база 0
+CELERY_RESULT_BACKEND = f"{REDIS_URL}/2"  # результаты — база 2
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TIMEZONE = TIME_ZONE

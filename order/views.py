@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from cart.models import Cart, CartItem
 from order.models import Order, OrderItem
 from order.serializers import OrderSerializer
+from order.tasks import send_order_confirmation
 from products.models import Product
 from shop1.permissions import IsOwnerOrAdmin
 
@@ -59,10 +60,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         order.total_price = total
         order.save(update_fields=["total_price"])
-
         CartItem.objects.filter(pk__in=[item.pk for item in items]).delete()
-
         serializer = self.get_serializer(order)
+        transaction.on_commit(lambda: send_order_confirmation.delay(order.pk))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])
