@@ -76,14 +76,16 @@ def api_client():
 @pytest.fixture
 def user(db):
     User = get_user_model()
-    return User.objects.create_user(username="testuser", password="testpass")
+    return User.objects.create_user(
+        username="testuser", password="testpass", email="test@mail.ru"
+    )
 
 
 @pytest.fixture
 def admin_user(db):
     User = get_user_model()
     return User.objects.create_superuser(
-        username="admin", password="adminpass"
+        username="admin", password="adminpass", email="test1@mail.ru"
     )
 
 

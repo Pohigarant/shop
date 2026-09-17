@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -13,6 +15,8 @@ class User(AbstractUser):
     phone = models.CharField(
         max_length=30, blank=True, verbose_name="Номер мобильного телефона"
     )
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS: ClassVar[list[str]] = ["email"]
 
     class Meta:
         verbose_name = "Пользователь"
