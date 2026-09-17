@@ -62,7 +62,11 @@ class OrderViewSet(viewsets.ModelViewSet):
         order.save(update_fields=["total_price"])
         CartItem.objects.filter(pk__in=[item.pk for item in items]).delete()
         serializer = self.get_serializer(order)
-        transaction.on_commit(lambda: send_order_confirmation.delay(order.pk))
+        transaction.on_commit(
+            lambda: send_order_confirmation.apply_async(
+                args=[order.pk], countdown=2
+            )
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])

@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
+    "celery-types>=0.26.0",
     "celery[redis]>=5.3.1",
     "coverage>=7.13.5",
     "django>=6.0.4",

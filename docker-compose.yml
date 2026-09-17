@@ -30,6 +30,13 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - EMAIL_HOST=smtp.mail.ru
+      - EMAIL_PORT=465
+      - EMAIL_USE_SSL=True
+      - EMAIL_HOST_USER=Pohigarant@mail.ru
+      - EMAIL_HOST_PASSWORD=Bpl6rVqUhTn9kI5pPS0y
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -50,6 +57,13 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - EMAIL_HOST=smtp.mail.ru
+      - EMAIL_PORT=465
+      - EMAIL_USE_SSL=True
+      - EMAIL_HOST_USER=Pohigarant@mail.ru
+      - EMAIL_HOST_PASSWORD=Bpl6rVqUhTn9kI5pPS0y
 volumes:
   postgres_data:
   venv_data:

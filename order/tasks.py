@@ -10,6 +10,6 @@ def send_order_confirmation(order_id):
     send_mail(
         subject=f"Заказ №{order_id} принят",
         message=f"Сумма заказа:  {order.total_price} ₽",
-        from_email="",
+        from_email="Pohigarant@mail.ru",
         recipient_list=["Pohigarant@mail.ru"],
     )
