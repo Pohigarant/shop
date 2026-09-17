@@ -1,5 +1,6 @@
-from django.db import transaction
-from django.db.models import Avg, Count
+from django.db import models, transaction
+from django.db.models import Avg, Count, Value
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
@@ -9,9 +10,12 @@ from review.models import Review
 
 def update_product_rating(product_id):
     stats = Review.objects.filter(product_id=product_id).aggregate(
-        average=Avg("rating"),
+        average=Coalesce(
+            Avg("rating"), Value(0), output_field=models.DecimalField()
+        ),
         count=Count("id"),
     )
+
     Product.objects.filter(pk=product_id).update(
         average_rating=stats["average"],
         reviews_count=stats["count"],
