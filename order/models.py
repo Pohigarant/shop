@@ -4,13 +4,13 @@ from django.db.models import Q
 
 from products.models import Product
 
-status_choices = [
-    ("pending", "pending"),
-    ("confirmed", "confirmed"),
-    ("shipped", "shipped"),
-    ("delivered", "delivered"),
-    ("cancelled", "cancelled"),
-]
+
+class OrderStatus(models.TextChoices):
+    PENDING = "pending", "Новый"
+    CONFIRMED = "confirmed", "Подтверждён"
+    SHIPPED = "shipped", "Отправлен"
+    DELIVERED = "delivered", "Доставлен"
+    CANCELLED = "cancelled", "Отменён"
 
 
 # Create your models here.
@@ -22,7 +22,7 @@ class Order(models.Model):
     )
 
     status = models.CharField(
-        choices=status_choices, default="pending", max_length=50
+        choices=OrderStatus.choices, default=OrderStatus.PENDING, max_length=20
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
