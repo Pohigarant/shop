@@ -17,7 +17,7 @@ class Review(models.Model):
     )
     user = models.ForeignKey(
         User,
-        related_name="user_reviews",
+        related_name="reviews",
         on_delete=models.CASCADE,
         verbose_name="Покупатель",
     )
@@ -36,7 +36,8 @@ class Review(models.Model):
         verbose_name_plural = "Отзывы"
         constraints = (
             UniqueConstraint(
-                fields=["user", "product"], name="unique_employee_fullname"
+                fields=["user", "product"],
+                name=" unique_review_per_user_product",
             ),
             CheckConstraint(
                 condition=Q(rating__gte=1) & Q(rating__lte=5),
