@@ -38,6 +38,10 @@ class Cart(models.Model):
     def __str__(self):
         return f"Корзина пользователя {self.user.username}"
 
+    @property
+    def total_price(self):
+        return sum(i.line_total for i in self.items.all())
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(
@@ -69,3 +73,7 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x{self.quantity}"
+
+    @property
+    def line_total(self):
+        return self.product.price * self.quantity
