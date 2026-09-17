@@ -44,8 +44,8 @@ class Product(models.Model):
     reviews_count = models.PositiveIntegerField(default=0)
 
     class Meta:
-        verbose_name = ("Товар",)
-        verbose_name_plural = ("Товары",)
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
         ordering = ("name",)
 
     def save(self, *args, **kwargs):
