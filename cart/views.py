@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -20,10 +20,17 @@ class CartItemViewSet(viewsets.ModelViewSet):
             ).select_related("product")
         return CartItem.objects.none()
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         cart, _ = Cart.objects.get_or_create(user=self.request.user)
-        serializer.save(cart=cart)
-        return serializer
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.validated_data["product"]
+        quantity = serializer.validated_data["quantity"]
+        cart_item = cart.add_product(product, quantity)
+        response_serializer = self.get_serializer(cart_item)
+        return Response(
+            response_serializer.data, status=status.HTTP_201_CREATED
+        )
 
     def perform_update(self, serializer):
         cart, _ = Cart.objects.get_or_create(user=self.request.user)

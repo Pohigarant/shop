@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 
 from products.models import Product
 from users.models import User
@@ -24,6 +25,15 @@ class Cart(models.Model):
     class Meta:
         verbose_name = "Корзина"
         verbose_name_plural = "Корзины"
+
+    def add_product(self, product, quantity=1):
+        item, created = self.items.get_or_create(
+            product=product, defaults={"quantity": quantity}
+        )
+        if not created:
+            item.quantity = F("quantity") + quantity
+            item.save(update_fields=["quantity"])
+        return item
 
     def __str__(self):
         return f"Корзина пользователя {self.user.username}"
