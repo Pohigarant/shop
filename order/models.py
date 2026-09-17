@@ -18,19 +18,26 @@ class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="order",
+        related_name="orders",
     )
 
     status = models.CharField(
         choices=status_choices, default="pending", max_length=50
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     total_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=0,
         verbose_name="Итоговая стоимость",
     )
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+        ordering = ("-created_at",)
+        indexes = (models.Index(fields=["user", "-created_at"]),)
 
     def __str__(self):
         return f"Заказ #{self.pk} ({self.status})"
