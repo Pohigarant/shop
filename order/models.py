@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 from products.models import Product
 
@@ -41,6 +42,20 @@ class OrderItem(models.Model):
     )
     quantity = models.PositiveIntegerField(default=1)
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        verbose_name = "Элемент заказа"
+        verbose_name_plural = "Элементы заказа"
+        constraints = (
+            models.CheckConstraint(
+                condition=Q(quantity__gte=1),
+                name="order_item_quantity_at_least_one",
+            ),
+            models.CheckConstraint(
+                condition=Q(price_at_purchase__gte=0),
+                name="order_item_price_non_negative",
+            ),
+        )
 
     def __str__(self):
         return f"{self.product.name} x{self.quantity}"

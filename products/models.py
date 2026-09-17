@@ -47,6 +47,16 @@ class Product(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
         ordering = ("name",)
+        constraints = (
+            models.CheckConstraint(
+                condition=models.Q(price__gte=0),
+                name="product_price_non_negative",
+            ),
+        )
+        indexes = (
+            models.Index(fields=["is_active"]),
+            models.Index(fields=["category", "is_active"]),
+        )
 
     def save(self, *args, **kwargs):
         if self.pk:

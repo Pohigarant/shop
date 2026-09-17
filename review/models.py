@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import CheckConstraint, Q
 from django.db.models.constraints import UniqueConstraint
 
 from products.models import Product
@@ -36,6 +37,10 @@ class Review(models.Model):
         constraints = (
             UniqueConstraint(
                 fields=["user", "product"], name="unique_employee_fullname"
+            ),
+            CheckConstraint(
+                condition=Q(rating__gte=1) & Q(rating__lte=5),
+                name="review_rating_between_1_and_5",
             ),
         )
 

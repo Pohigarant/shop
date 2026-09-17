@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Q
 
 from products.models import Product
 from users.models import User
@@ -61,6 +61,11 @@ class CartItem(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
         unique_together = (("cart", "product"),)
+        constraints = (
+            models.CheckConstraint(
+                condition=Q(quantity__gte=1), name="cart_quantity_not_negative"
+            ),
+        )
 
     def __str__(self):
         return f"{self.product.name} x{self.quantity}"
