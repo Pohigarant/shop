@@ -67,7 +67,7 @@ def test_list_uses_list_serializer(api_client, product):
     assert (
         item["category"] == "Test Category"
     )  # SlugRelatedField, не вложенный объект
-    assert set(item.keys()) == {"id", "name", "price", "category"}
+    assert set(item.keys()) == {"id", "name", "price", "category", "slug"}
 
 
 @pytest.mark.parametrize(
