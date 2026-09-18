@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.db import models
-from django.db.models import Q
+from django.db import models, transaction
+from django.db.models import F, Q
+from rest_framework.exceptions import ValidationError
 
 from products.models import Product
 
@@ -47,6 +48,17 @@ class Order(models.Model):
             i.price_at_purchase * i.quantity for i in self.items.all()
         )
         self.save(update_fields=["total_price"])
+
+    @transaction.atomic
+    def cancel(self):
+        if self.status != OrderStatus.PENDING:
+            raise ValidationError("Отменить можно только новый заказ")
+        for item in self.items.select_related("product"):
+            Product.objects.filter(pk=item.product_id).update(
+                quantity=F("quantity") + item.quantity
+            )
+        self.status = OrderStatus.CANCELLED
+        self.save(update_fields=["status"])
 
 
 class OrderItem(models.Model):

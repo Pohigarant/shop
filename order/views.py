@@ -72,11 +72,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["POST"])
     def cancel(self, request, pk=None):
         order = self.get_object()
-        if order.status != "pending":
-            return Response(
-                {"detail": "Статус не "}, status=status.HTTP_400_BAD_REQUEST
-            )
-        order.status = "cancelled"
-        order.save()
+        order.cancel()
         serializer = self.get_serializer(order)
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
