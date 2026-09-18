@@ -28,5 +28,14 @@ class Category(models.Model):
                 self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    def _unique_slug(model, name, pk=None):
+        base = slugify(name)
+        slug, i = base, 2
+        qs = model.objects.exclude(pk=pk)
+        while qs.filter(slug=slug).exists():
+            slug = f"{base}-{i}"
+            i += 1
+        return slug
+
     def get_absolute_url(self):
         return reverse("categories-detail", kwargs={"pk": self.pk})
