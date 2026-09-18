@@ -9,7 +9,6 @@ class Cart(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        null=True,
         blank=True,
         related_name="cart",
         verbose_name="Покупатель",
