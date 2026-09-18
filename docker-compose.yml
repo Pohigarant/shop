@@ -33,7 +33,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      #- REDIS_PORT=6379
       - EMAIL_HOST=smtp.mail.ru
       - EMAIL_PORT=465
       - EMAIL_USE_SSL=True
@@ -61,6 +61,7 @@ services:
         condition: service_healthy
     environment:
       - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
       - EMAIL_HOST=smtp.mail.ru
       - EMAIL_PORT=465
       - EMAIL_USE_SSL=True
