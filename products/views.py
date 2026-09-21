@@ -43,7 +43,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductListSerializer
 
     def get_queryset(self):
-        qs = Product.objects.select_related("category")
+        qs = Product.available.select_related("category")
         category_pk = self.kwargs.get("category_pk")
         if category_pk:
             qs = qs.filter(category__id=category_pk)

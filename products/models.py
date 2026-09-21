@@ -5,7 +5,15 @@ from slugify import slugify
 from categories.models import Category
 
 
+class ActiveProductManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True)
+
+
 class Product(models.Model):
+    objects = models.Manager()  # все товары — для админки
+    available = ActiveProductManager()
+
     category = models.ForeignKey(
         Category,
         on_delete=models.PROTECT,
@@ -58,15 +66,11 @@ class Product(models.Model):
             models.Index(fields=["category", "is_active"]),
         )
 
-    def save(self, *args, **kwargs):
-        if self.pk:
-            old = Product.objects.get(pk=self.pk)
-            if old.name != self.name:
-                self.slug = slugify(self.name)
-        else:
-            if not self.slug:
-                self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        instance._old_name = instance.name
+        return instance
 
     def _unique_slug(model, name, pk=None):
         base = slugify(name)
@@ -76,6 +80,15 @@ class Product(models.Model):
             slug = f"{base}-{i}"
             i += 1
         return slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug or self.name != getattr(self, "_old_name", None):
+            self.slug = self._unique_slug(Product, self.name, self.pk)
+            update_fields = kwargs.get("update_fields")
+            if update_fields is not None:
+                kwargs["update_fields"] = set(update_fields) | {"slug"}
+        super().save(*args, **kwargs)
+        self._old_name = self.name
 
     def __str__(self):
         return self.name
