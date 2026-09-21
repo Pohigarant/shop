@@ -21,7 +21,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
         return CartItem.objects.none()
 
     def create(self, request, *args, **kwargs):
-        cart, _ = Cart.objects.get_or_create(user=self.request.user)
+        cart = self.request.user.cart
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         product = serializer.validated_data["product"]
@@ -33,7 +33,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
         )
 
     def perform_update(self, serializer):
-        cart, _ = Cart.objects.get_or_create(user=self.request.user)
+        cart = self.request.user.cart
         serializer.save(cart=cart)
         return serializer
 
@@ -43,9 +43,9 @@ class CartView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_object(self):
-        cart, _ = Cart.objects.get_or_create(user=self.request.user)
-        cart = Cart.objects.prefetch_related("items__product").get(pk=cart.pk)
-        return cart
+        return Cart.objects.prefetch_related("items__product").get(
+            user=self.request.user
+        )
 
     @action(detail=False, methods=["get"])
     def my(self, request):
