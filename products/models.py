@@ -72,10 +72,10 @@ class Product(models.Model):
         instance._old_name = instance.name
         return instance
 
-    def _unique_slug(model, name, pk=None):
-        base = slugify(name)
+    def _unique_slug(self):
+        base = slugify(self.name)
         slug, i = base, 2
-        qs = model.objects.exclude(pk=pk)
+        qs = self.__class__.objects.exclude(pk=self.pk)
         while qs.filter(slug=slug).exists():
             slug = f"{base}-{i}"
             i += 1
@@ -83,7 +83,7 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug or self.name != getattr(self, "_old_name", None):
-            self.slug = self._unique_slug(Product, self.name, self.pk)
+            self.slug = self._unique_slug()
             update_fields = kwargs.get("update_fields")
             if update_fields is not None:
                 kwargs["update_fields"] = set(update_fields) | {"slug"}
