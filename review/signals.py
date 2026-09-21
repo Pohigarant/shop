@@ -1,9 +1,9 @@
+from django.core.cache import cache
 from django.db import models, transaction
 from django.db.models import Avg, Count, Value
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
-from redis import cache
 
 from products.models import Product
 from review.models import Review
