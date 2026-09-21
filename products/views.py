@@ -57,3 +57,15 @@ class ProductViewSet(viewsets.ModelViewSet):
             data = ProductDetailSerializer(queryset, many=True).data
             cache.set(CACHE_KEY_POPULAR, data)
         return Response(data)
+
+    def perform_create(self, serializer):
+        serializer.save()
+        cache.delete(CACHE_KEY_POPULAR)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        cache.delete(CACHE_KEY_POPULAR)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        cache.delete(CACHE_KEY_POPULAR)
