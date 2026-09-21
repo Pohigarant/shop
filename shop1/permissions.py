@@ -1,7 +1,6 @@
 from rest_framework import permissions
 
-from order.models import OrderItem
-from products.models import Product
+from order.models import OrderItem, OrderStatus
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
@@ -26,17 +25,16 @@ class IsCartOwnerOrAdmin(permissions.BasePermission):
 
 
 class HasPurchasedProduct(permissions.BasePermission):
+    message = "Отзыв можно оставить только на купленный товар"
+
     def has_permission(self, request, view):
-        user = request.user
-        if not user.is_authenticated:
+        if not request.user.is_authenticated:
             return False
-
-        product_name = request.data.get("product")
-        try:
-            product = Product.objects.get(name=product_name)
-        except Product.DoesNotExist:
+        product_pk = view.kwargs.get("prod_pk") or request.data.get("product")
+        if not product_pk:
             return False
-
         return OrderItem.objects.filter(
-            order__user=user, order__status="delivered", product=product
+            order__user=request.user,
+            order__status=OrderStatus.DELIVERED,
+            product_id=product_pk,  # по id, не по имени
         ).exists()

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, Q
 
@@ -25,12 +26,22 @@ class Cart(models.Model):
         verbose_name_plural = "Корзины"
 
     def add_product(self, product, quantity=1):
+        if quantity > product.quantity:
+            raise ValidationError(
+                f"Недостаточно товара '{product.name}' на складе. Доступно: {product.quantity} шт."
+            )
         item, created = self.items.get_or_create(
             product=product, defaults={"quantity": quantity}
         )
         if not created:
+            if item.quantity + quantity > product.quantity:
+                raise ValidationError(
+                    f"Невозможно добавить {quantity} шт. В корзине уже {item.quantity} шт., а на складе всего {product.quantity} шт."
+                )
+
             item.quantity = F("quantity") + quantity
             item.save(update_fields=["quantity"])
+            item.refresh_from_db()  # Сбрасываем F() выражение в обычное число в памяти Python
         return item
 
     def __str__(self):
@@ -75,3 +86,16 @@ class CartItem(models.Model):
     @property
     def line_total(self):
         return self.product.price * self.quantity
+
+    def clean(self):
+        super().clean()
+        if self.product and self.quantity > self.product.quantity:
+            raise ValidationError(
+                {
+                    "quantity": f"Запрашиваемое количество ({self.quantity} шт.) превышает остаток на складе ({self.product.quantity} шт.)."
+                }
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Принудительно запускает метод clean() перед сохранением в БД
+        super().save(*args, **kwargs)
