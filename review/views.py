@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
@@ -5,6 +6,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from products.models import Product
+from products.views import CACHE_KEY_POPULAR
 from review.models import Review
 from review.pagination import ReviewPagination
 from review.serializers import ReviewSerializer
@@ -57,3 +59,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
             serializer.save(user=self.request.user, product=product)
         else:
             serializer.save(user=self.request.user)
+        cache.delete(CACHE_KEY_POPULAR)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        cache.delete(CACHE_KEY_POPULAR)
