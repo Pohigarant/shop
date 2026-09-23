@@ -56,6 +56,11 @@ disable_error_code = ["var-annotated"] #май пай не будет рукга
 fail_under = 80
 show_missing = true
 [tool.coverage.run]
+[tool.coverage.run]
 omit = [
     "*/migrations/*",
+    "fill_all_products.py",
+    "fill_reviews.py",
+    "tren.py",
 ]
+
