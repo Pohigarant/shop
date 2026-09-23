@@ -53,7 +53,7 @@ def test_cart_item_serializer_create(cart, product):
         "quantity": 2,
     }
     serializer = CartItemSerializer(data=data)
-    assert serializer.is_valid() is True
+    assert serializer.is_valid(raise_exception=True) is True
     saved_item = serializer.save(cart=cart)
     assert saved_item.cart == cart  # сравниваем объект Cart
     assert saved_item.product == product  # сравниваем объект Product

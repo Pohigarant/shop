@@ -41,7 +41,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         for field, value in attrs.items():
             setattr(instance, field, value)
         try:
-            instance.full_clean()
+            instance.full_clean(exclude=["cart"])
         except DjangoValidationError as e:
             raise serializers.ValidationError(e.message_dict)
         return attrs
