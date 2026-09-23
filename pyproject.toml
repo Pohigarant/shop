@@ -55,3 +55,7 @@ disable_error_code = ["var-annotated"] #май пай не будет рукга
 [tool.coverage.report]   # если тесты покрывают меньше 80 процентов пайтест бы ругался
 fail_under = 80
 show_missing = true
+[tool.coverage.run]
+omit = [
+    "*/migrations/*",
+]
