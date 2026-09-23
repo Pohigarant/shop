@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from cart.models import Cart, CartItem
@@ -33,6 +34,17 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     def get_item_total_price(self, obj):
         return obj.product.price * obj.quantity
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        instance = self.instance or CartItem()
+        for field, value in attrs.items():
+            setattr(instance, field, value)
+        try:
+            instance.full_clean()
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(e.message_dict)
+        return attrs
 
 
 class CartSerializer(serializers.ModelSerializer):

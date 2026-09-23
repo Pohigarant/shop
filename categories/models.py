@@ -18,24 +18,23 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if self.pk:
-            old = Category.objects.get(pk=self.pk)
-            if old.name != self.name:
-                self.slug = slugify(self.name)
-        else:
-            if not self.slug:
-                self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
-    def _unique_slug(model, name, pk=None):
-        base = slugify(name)
+    def _unique_slug(self):
+        base = slugify(self.name)
         slug, i = base, 2
-        qs = model.objects.exclude(pk=pk)
+        qs = self.__class__.objects.exclude(pk=self.pk)
         while qs.filter(slug=slug).exists():
             slug = f"{base}-{i}"
             i += 1
         return slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug or self.name != getattr(self, "_old_name", None):
+            self.slug = self._unique_slug()
+            update_fields = kwargs.get("update_fields")
+            if update_fields is not None:
+                kwargs["update_fields"] = set(update_fields) | {"slug"}
+        super().save(*args, **kwargs)
+        self._old_name = self.name
 
     def get_absolute_url(self):
         return reverse("categories-detail", kwargs={"pk": self.pk})
